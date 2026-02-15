@@ -20,13 +20,12 @@ h1{
   margin-top:20px;
 }
 
-/* CONTENEDOR GENERAL */
+/* CONTENEDOR GENERAL TIPO ABANICO VISTA DORSO*/
 .cartas{
-  display:grid;
-  grid-template-columns: repeat(5, 1fr); /* 5 cartas por fila */
-  gap:20px;
-  max-width:800px;
-  margin:40px auto;
+  position: relative;
+  width: 100%;
+  height: 500px;
+  margin: 60px auto;
 }
 
 /* CARTA */
@@ -35,6 +34,9 @@ h1{
   height:190px;       /* ⬅️ ALTO */
   perspective:1000px; /* profundidad 3D */
   cursor:pointer;
+
+  position:absolute; 
+  transition: all 0.6s ease; 
 }
 
 /* BLOQUEA CLICKS CUANDO TERMINA */
@@ -116,6 +118,12 @@ h1{
   animation:mezclar 0.6s ease-in-out infinite alternate;
 }
 
+.carta.zoom{
+  transform: scale(1.6);
+  transition: transform 0.6s ease;
+}
+
+
 @keyframes mezclar{
   from{ transform: translateY(-10px); }
   to{ transform: translateY(10px); }
@@ -151,7 +159,7 @@ const arcanos={
 5:"Carta 5"
 };
 
-let mazo=[1,2,3,4,5];
+let mazo = Array.from({length: 22}, (_, i) => i);
 let seleccionadas=[];
 let cartasDOM=[];
 let tiradaActiva=false;
@@ -171,7 +179,7 @@ function iniciarTirada(){
     [mazo[i], mazo[j]]=[mazo[j], mazo[i]];
   }
 
-  mazo.forEach(numero=>{
+  mazo.forEach((numero, index)=>{
 
     const carta=document.createElement("div");
     carta.className="carta mezclando";
@@ -184,13 +192,38 @@ function iniciarTirada(){
 
     const frente=document.createElement("div");
     frente.className="frente";
-    frente.style.backgroundImage=`url('img/${numero}.jpeg')`;
+    frente.style.backgroundImage=`url('img/${numero}.png')`;
 
     inner.appendChild(dorso);
     inner.appendChild(frente);
     carta.appendChild(inner);
 
     carta.dataset.numero=numero;
+    
+    // posicion tipo abanico
+let separacion;
+
+if(window.innerWidth < 600){
+  separacion = 60;     // celular
+}else if(window.innerWidth < 1000){
+  separacion = 80;     // tablet
+}else{
+  separacion = 80;     // desktop
+}
+const anchoCarta = 120;
+const cartasPorFila = 11;
+
+const fila = Math.floor(index / cartasPorFila);
+const posicionEnFila = index % cartasPorFila;
+
+const anchoTotal = (cartasPorFila - 1) * separacion + anchoCarta;
+
+carta.style.left = ((window.innerWidth - anchoTotal) / 2 + posicionEnFila * separacion) + "px";
+
+const altoCarta = 190;
+const separacionVertical = 220; // distancia entre filas
+carta.style.top = (fila * separacionVertical) + "px";
+carta.style.zIndex = index;
 
     carta.onclick=()=>{
       if(!tiradaActiva) return;
@@ -229,6 +262,7 @@ function revelarCartas(){
   tiradaActiva=false;
 
   seleccionadas.forEach(carta=>{
+    carta.style.zIndex = 999;
 
     // 50% probabilidad invertida
     if(Math.random()<0.5){
@@ -236,6 +270,7 @@ function revelarCartas(){
     }
 
     carta.classList.add("flip");
+    carta.classList.add("zoom");
   });
 
   // bloquea el resto
