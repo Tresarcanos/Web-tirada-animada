@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Tirada 5 Cartas</title>
+
+<style>
+
+body{
+  font-family: Arial, sans-serif;
+  text-align:center;
+  margin:0;
+  min-height:100vh;
+
+  background: radial-gradient(circle at center, #2c1b47 0%, #120b1f 60%, #000000 100%);
+  color: white;
+}
+
+h1{
+  margin-top:20px;
+}
+
+/* CONTENEDOR GENERAL */
+.cartas{
+  display:grid;
+  grid-template-columns: repeat(5, 1fr); /* 5 cartas por fila */
+  gap:20px;
+  max-width:800px;
+  margin:40px auto;
+}
+
+/* CARTA */
+.carta{
+  width:120px;        /* ⬅️ ANCHO */
+  height:190px;       /* ⬅️ ALTO */
+  perspective:1000px; /* profundidad 3D */
+  cursor:pointer;
+}
+
+/* BLOQUEA CLICKS CUANDO TERMINA */
+.carta.bloqueada{
+  pointer-events:none;
+  opacity:0.6;
+}
+
+/* CONTENEDOR QUE GIRA */
+.inner{
+  width:100%;
+  height:100%;
+  position:relative;
+  transform-style:preserve-3d;
+  transition: transform 0.8s;
+}
+
+/* GIRO NORMAL */
+.carta.flip .inner{
+  transform: rotateY(180deg);
+}
+
+/* GIRO INVERTIDO */
+.carta.invertida.flip .inner{
+  transform: rotateY(180deg) rotate(180deg);
+}
+
+/* CARAS */
+.frente, .dorso{
+  position:absolute;
+  width:100%;
+  height:100%;
+  backface-visibility:hidden;
+  border-radius:12px;
+  background-size:cover;
+  background-position:center;
+  box-shadow:0 10px 20px rgba(0,0,0,0.3);
+}
+
+/* ESPALDA */
+.dorso{
+  background-image:url('img/back.jpeg');
+}
+
+/* FRENTE */
+.frente{
+  transform: rotateY(180deg);
+}
+
+/* FEEDBACK VISUAL CUANDO SE SELECCIONA */
+
+.carta.seleccionada {
+  transform: translateY(-15px); /* pequeño salto hacia arriba */
+}
+
+.carta.seleccionada .inner {
+  box-shadow: 0 0 20px gold;
+}
+
+/* Numerito que aparece arriba */
+.marcador {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: gold;
+  color: black;
+  font-weight: bold;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.4);
+}
+
+.mezclando{
+  animation:mezclar 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes mezclar{
+  from{ transform: translateY(-10px); }
+  to{ transform: translateY(10px); }
+}
+
+button{
+  padding:10px 20px;
+  margin-top:20px;
+  font-size:16px;
+  cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>Tirada de 3 cartas</h1>
+<p>Concentrate y elegí tres cartas</p>
+
+<button onclick="iniciarTirada()">Mezclar y comenzar</button>
+
+<div class="cartas" id="mazo"></div>
+<div id="resultado" style="margin-top:30px;font-size:18px;"></div>
+
+<script>
+
+const arcanos={
+1:"Carta 1",
+2:"Carta 2",
+3:"Carta 3",
+4:"Carta 4",
+5:"Carta 5"
+};
+
+let mazo=[1,2,3,4,5];
+let seleccionadas=[];
+let cartasDOM=[];
+let tiradaActiva=false;
+
+const contenedor=document.getElementById("mazo");
+
+/* MEZCLA VISUAL + REAL */
+function iniciarTirada(){
+
+  seleccionadas=[];
+  contenedor.innerHTML="";
+  tiradaActiva=true;
+
+  // Fisher-Yates real
+  for(let i=mazo.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [mazo[i], mazo[j]]=[mazo[j], mazo[i]];
+  }
+
+  mazo.forEach(numero=>{
+
+    const carta=document.createElement("div");
+    carta.className="carta mezclando";
+
+    const inner=document.createElement("div");
+    inner.className="inner";
+
+    const dorso=document.createElement("div");
+    dorso.className="dorso";
+
+    const frente=document.createElement("div");
+    frente.className="frente";
+    frente.style.backgroundImage=`url('img/${numero}.jpeg')`;
+
+    inner.appendChild(dorso);
+    inner.appendChild(frente);
+    carta.appendChild(inner);
+
+    carta.dataset.numero=numero;
+
+    carta.onclick=()=>{
+      if(!tiradaActiva) return;
+      if(seleccionadas.length>=3) return;
+      if(seleccionadas.includes(carta)) return;
+
+      carta.classList.remove("mezclando");
+      seleccionadas.push(carta);
+      // Agrega efecto visual de seleccion
+carta.classList.add("seleccionada");
+
+// Crear numerito indicador (1, 2 o 3)
+const marcador = document.createElement("div");
+marcador.className = "marcador";
+marcador.textContent = seleccionadas.length;
+carta.appendChild(marcador);
+
+
+      if(seleccionadas.length===3){
+        revelarCartas();
+      }
+    };
+
+    cartasDOM.push(carta);
+    contenedor.appendChild(carta);
+  });
+
+  // corta animación mezcla después de 1.5s
+  setTimeout(()=>{
+    cartasDOM.forEach(c=>c.classList.remove("mezclando"));
+  },1500);
+}
+
+function revelarCartas(){
+
+  tiradaActiva=false;
+
+  seleccionadas.forEach(carta=>{
+
+    // 50% probabilidad invertida
+    if(Math.random()<0.5){
+      carta.classList.add("invertida");
+    }
+
+    carta.classList.add("flip");
+  });
+
+  // bloquea el resto
+  cartasDOM.forEach(c=>{
+    if(!seleccionadas.includes(c)){
+      c.classList.add("bloqueada");
+    }
+  });
+
+  setTimeout(()=>{
+    const nombres=seleccionadas.map(c=>{
+      const n=c.dataset.numero;
+      return arcanos[n];
+    });
+
+    document.getElementById("resultado").innerHTML=`
+      <h3>Cartas reveladas</h3>
+      <ul style="list-style:none;padding:0;">
+        <li>${nombres[0]}</li>
+        <li>${nombres[1]}</li>
+        <li>${nombres[2]}</li>
+      </ul>
+    `;
+  },900);
+}
+
+</script>
+
+</body>
+</html>
