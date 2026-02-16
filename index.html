@@ -89,7 +89,7 @@ h1{
 /* FEEDBACK VISUAL CUANDO SE SELECCIONA */
 
 .carta.seleccionada {
-  transform: translateY(-25px); /* pequeño salto hacia arriba */
+  transform: translateY(-35px); /* pequeño salto hacia arriba */
 }
 
 .carta.zoomFinal{
@@ -153,6 +153,24 @@ button{
 
 }
 
+/* 🌑 Capa oscura al revelar cartas */
+.overlayOscuro {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.50);
+  backdrop-filter: blur(4px);
+  z-index: 500;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.overlayOscuro.activo {
+  opacity: 1;
+}
 
 </style>
 </head>
@@ -163,7 +181,9 @@ button{
 <p>Concentrate y elegí tres cartas</p>
 
 <button onclick="iniciarTirada()">Mezclar y comenzar</button>
+<div id="overlayOscuro" class="overlayOscuro"></div>
 <div id="mensajeConfirmacion" style="margin-top:20px;font-size:18px;"></div>
+
 
 <div class="cartas" id="mazo"></div>
 <div id="resultado" style="margin-top:30px;font-size:18px;"></div>
@@ -199,7 +219,8 @@ const arcanos = {
 // 🔮 Integración con Make (envío de cartas seleccionadas)
 // ==============================
 
-function enviarCartasAMake(cartas, nombres) {
+function enviarCartasAMake(cartas, nombres, invertidas) {
+
 
   fetch("https://hook.us2.make.com/a7tdu27m1w13atvq38glwz08120gwt42", {
     method: "POST",
@@ -207,18 +228,21 @@ function enviarCartasAMake(cartas, nombres) {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      order_id: orderId,
-      email: email,
+  order_id: orderId,
+  email: email,
 
-      carta_1_num: cartas[0],
-      carta_1_nombre: nombres[0],
+  carta_1_num: cartas[0],
+  carta_1_nombre: nombres[0],
+  carta_1_invertida: invertidas[0],
 
-      carta_2_num: cartas[1],
-      carta_2_nombre: nombres[1],
+  carta_2_num: cartas[1],
+  carta_2_nombre: nombres[1],
+  carta_2_invertida: invertidas[1],
 
-      carta_3_num: cartas[2],
-      carta_3_nombre: nombres[2]
-    })
+  carta_3_num: cartas[2],
+  carta_3_nombre: nombres[2],
+  carta_3_invertida: invertidas[2]
+
   })
   .then(() => {
   document.getElementById("mensajeConfirmacion").innerHTML =
@@ -348,6 +372,10 @@ function revelarCartas(){
 
   tiradaActiva=false;
 
+// 🔮 Oscurecer fondo al revelar
+  document.getElementById("overlayOscuro").classList.add("activo");
+
+
   seleccionadas.forEach((carta, i)=>{
 
   carta.style.zIndex = 999;
@@ -392,10 +420,15 @@ carta.appendChild(nombre);
 console.log("Email:", email);
 
   // 🔮 Enviar cartas a Make
-  const numeros = seleccionadas.map(c => parseInt(c.dataset.numero));
-  const nombres = numeros.map(n => arcanos[n]);
+const numeros = seleccionadas.map(c => parseInt(c.dataset.numero));
+const nombres = numeros.map(n => arcanos[n]);
 
-  enviarCartasAMake(numeros, nombres);
+const invertidas = seleccionadas.map(c => 
+  c.classList.contains("invertida")
+);
+
+  enviarCartasAMake(numeros, nombres, invertidas);
+
 
 }
 
