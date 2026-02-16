@@ -423,11 +423,10 @@ const numeros = seleccionadas.map(c => parseInt(c.dataset.numero));
 const nombres = numeros.map(n => arcanos[n]);
 
 const invertidas = seleccionadas.map(c => 
-  c.classList.contains("invertida")
+  c.classList.contains("invertida") ? "invertida" : ""
 );
 
   enviarCartasAMake(numeros, nombres, invertidas);
-
 
 }
 
