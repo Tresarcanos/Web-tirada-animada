@@ -181,6 +181,11 @@ button{
 <p>Concentrate y elegí tres cartas</p>
 
 <button onclick="iniciarTirada()">Mezclar y comenzar</button>
+
+<!-- 🔊 Sonidos -->
+<audio id="sonidoClick" src="sound/select2.mp3" preload="auto"></audio>
+<audio id="sonidoRevelar" src="sound/revelar2.mp3" preload="auto"></audio>
+
 <div id="overlayOscuro" class="overlayOscuro"></div>
 <div id="mensajeConfirmacion" style="margin-top:20px;font-size:18px;"></div>
 
@@ -342,6 +347,12 @@ carta.style.zIndex = index;
 
       carta.classList.remove("mezclando");
       seleccionadas.push(carta);
+      if (seleccionadas.length < 3) {
+  const sonido = document.getElementById("sonidoClick");
+  sonido.currentTime = 0;
+  sonido.play();
+}
+
       // Agrega efecto visual de seleccion
 carta.classList.add("seleccionada");
 
@@ -368,6 +379,10 @@ carta.appendChild(marcador);
 }
 
 function revelarCartas(){
+const sonidoRevelar = document.getElementById("sonidoRevelar");
+sonidoRevelar.currentTime = 0;
+sonidoRevelar.play();
+
 
   tiradaActiva=false;
 
