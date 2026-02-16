@@ -30,13 +30,13 @@ h1{
 
 /* CARTA */
 .carta{
-  width:120px;        /* ⬅️ ANCHO */
-  height:190px;       /* ⬅️ ALTO */
+  width:150px;        /* ⬅️ ANCHO */
+  height:250px;       /* ⬅️ ALTO */
   perspective:1000px; /* profundidad 3D */
   cursor:pointer;
-
   position:absolute; 
   transition: all 0.6s ease; 
+  overflow: visible;
 }
 
 /* BLOQUEA CLICKS CUANDO TERMINA */
@@ -89,7 +89,11 @@ h1{
 /* FEEDBACK VISUAL CUANDO SE SELECCIONA */
 
 .carta.seleccionada {
-  transform: translateY(-15px); /* pequeño salto hacia arriba */
+  transform: translateY(-25px); /* pequeño salto hacia arriba */
+}
+
+.carta.zoomFinal{
+  transform: scale(1.8);
 }
 
 .carta.seleccionada .inner {
@@ -135,6 +139,20 @@ button{
   font-size:16px;
   cursor:pointer;
 }
+/* 🔮 Nombre debajo de cada carta */
+.nombreCarta{
+  position: absolute;
+  bottom: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  font-weight: bold;
+  font-size: 13px;
+  text-shadow: 0 0 10px black;
+    z-index: 2000;
+
+}
+
 
 </style>
 </head>
@@ -151,13 +169,31 @@ button{
 
 <script>
 
-const arcanos={
-1:"Carta 1",
-2:"Carta 2",
-3:"Carta 3",
-4:"Carta 4",
-5:"Carta 5"
+const arcanos = {
+0: "El Loco",
+1: "El Mago",
+2: "La Sacerdotisa",
+3: "La Emperatriz",
+4: "El Emperador",
+5: "El Sumo Sacerdote",
+6: "Los Enamorados",
+7: "El Carro",
+8: "La Fuerza",
+9: "El Ermitaño",
+10: "La Rueda de la Fortuna",
+11: "La Justicia",
+12: "El Colgado",
+13: "La Muerte",
+14: "La Templanza",
+15: "El Diablo",
+16: "La Torre",
+17: "La Estrella",
+18: "La Luna",
+19: "El Sol",
+20: "El Juicio",
+21: "El Mundo"
 };
+
 
 let mazo = Array.from({length: 22}, (_, i) => i);
 let seleccionadas=[];
@@ -221,7 +257,7 @@ const anchoTotal = (cartasPorFila - 1) * separacion + anchoCarta;
 carta.style.left = ((window.innerWidth - anchoTotal) / 2 + posicionEnFila * separacion) + "px";
 
 const altoCarta = 190;
-const separacionVertical = 220; // distancia entre filas
+const separacionVertical = 280; // distancia entre filas
 carta.style.top = (fila * separacionVertical) + "px";
 carta.style.zIndex = index;
 
@@ -261,17 +297,38 @@ function revelarCartas(){
 
   tiradaActiva=false;
 
-  seleccionadas.forEach(carta=>{
-    carta.style.zIndex = 999;
+  seleccionadas.forEach((carta, i)=>{
 
-    // 50% probabilidad invertida
-    if(Math.random()<0.5){
-      carta.classList.add("invertida");
-    }
+  carta.style.zIndex = 999;
 
-    carta.classList.add("flip");
-    carta.classList.add("zoom");
-  });
+  // Centro horizontal
+  const centroX = window.innerWidth / 2;
+  const anchoCarta = 220;
+  const separacionFinal = 400; // espacio entre las 3 finales
+  const desplazamiento = (i - 1) * separacionFinal;
+
+  carta.style.left = (centroX - anchoCarta/2 + desplazamiento) + "px";
+
+  // Centro vertical
+  carta.style.top = "80px";
+
+  if(Math.random()<0.5){
+    carta.classList.add("invertida");
+  }
+
+  carta.classList.add("flip");
+  carta.classList.add("zoomFinal");
+
+  // Crear nombre debajo de la carta
+const nombre = document.createElement("div");
+nombre.className = "nombreCarta";
+const numero = parseInt(carta.dataset.numero);
+nombre.textContent = arcanos[numero] || "Carta " + numero;
+
+carta.appendChild(nombre);
+
+});
+
 
   // bloquea el resto
   cartasDOM.forEach(c=>{
@@ -280,21 +337,7 @@ function revelarCartas(){
     }
   });
 
-  setTimeout(()=>{
-    const nombres=seleccionadas.map(c=>{
-      const n=c.dataset.numero;
-      return arcanos[n];
-    });
-
-    document.getElementById("resultado").innerHTML=`
-      <h3>Cartas reveladas</h3>
-      <ul style="list-style:none;padding:0;">
-        <li>${nombres[0]}</li>
-        <li>${nombres[1]}</li>
-        <li>${nombres[2]}</li>
-      </ul>
-    `;
-  },900);
+  
 }
 
 </script>
