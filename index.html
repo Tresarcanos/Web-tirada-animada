@@ -239,7 +239,11 @@ const params = new URLSearchParams(window.location.search);
 const orderId = params.get("order_id");
 const email = params.get("email");
 
-// ==============================
+if (!orderId || !email) {
+  document.getElementById("mensajeConfirmacion").innerHTML =
+    "⚠ No se detectaron datos de orden en el enlace.";
+}
+
 
 let mazo = Array.from({length: 22}, (_, i) => i);
 let seleccionadas=[];
@@ -383,6 +387,10 @@ carta.appendChild(nombre);
       c.classList.add("bloqueada");
     }
   });
+
+  console.log("Order ID:", orderId);
+console.log("Email:", email);
+
   // 🔮 Enviar cartas a Make
   const numeros = seleccionadas.map(c => parseInt(c.dataset.numero));
   const nombres = numeros.map(n => arcanos[n]);
