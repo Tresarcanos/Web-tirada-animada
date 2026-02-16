@@ -163,6 +163,7 @@ button{
 <p>Concentrate y elegí tres cartas</p>
 
 <button onclick="iniciarTirada()">Mezclar y comenzar</button>
+<div id="mensajeConfirmacion" style="margin-top:20px;font-size:18px;"></div>
 
 <div class="cartas" id="mazo"></div>
 <div id="resultado" style="margin-top:30px;font-size:18px;"></div>
@@ -220,13 +221,15 @@ function enviarCartasAMake(cartas, nombres) {
     })
   })
   .then(() => {
-    console.log("Cartas enviadas correctamente");
-  })
-  .catch(() => {
-    console.log("Error al enviar tirada");
-  });
-}
+  document.getElementById("mensajeConfirmacion").innerHTML =
+    "✨ Tus cartas fueron registradas correctamente ✨";
+})
+.catch(() => {
+  document.getElementById("mensajeConfirmacion").innerHTML =
+    "⚠ Error al registrar la tirada";
+});
 
+}
 
 // ==============================
 // 🔮 DATOS RECIBIDOS DESDE LA URL (Make / Tienda)
@@ -242,6 +245,9 @@ let mazo = Array.from({length: 22}, (_, i) => i);
 let seleccionadas=[];
 let cartasDOM=[];
 let tiradaActiva=false;
+document.querySelector("button").disabled = true;
+document.querySelector("button").style.opacity = "0.5";
+document.querySelector("button").style.cursor = "not-allowed";
 
 const contenedor=document.getElementById("mazo");
 
