@@ -463,9 +463,10 @@ const invertidas = seleccionadas.map(c =>
 
   enviarCartasAMake(numeros, nombres, invertidas);
   console.log("Tirada actual:", tiradaActual, "Cantidad comprada:", cantidadPreguntas);
+  
   if (tiradaActual < cantidadPreguntas) {
-
-  const btn = document.getElementById("btnSiguiente");
+    console.log("Entró al bloque de siguiente revelación");
+    const btn = document.getElementById("btnSiguiente");
 
   const textoNumero =
     tiradaActual === 1 ? "segunda" :
