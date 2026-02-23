@@ -180,7 +180,7 @@ button{
 <h1>Tirada de 3 cartas</h1>
 <p>Concentrate y elegí tres cartas</p>
 
-<button onclick="iniciarTirada()">Mezclar y comenzar</button>
+<button id="btnIniciar" onclick="iniciarTirada()">Mezclar y comenzar</button>
 
 <!-- 🔊 Sonidos -->
 <audio id="sonidoClick" src="sound/select2.mp3" preload="auto"></audio>
@@ -285,6 +285,7 @@ const contenedor=document.getElementById("mazo");
 
 /* MEZCLA VISUAL + REAL */
 function iniciarTirada(){
+  document.getElementById("btnIniciar").disabled = true;
 
   seleccionadas=[];
   contenedor.innerHTML="";
