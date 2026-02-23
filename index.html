@@ -264,10 +264,11 @@ function enviarCartasAMake(cartas, nombres, invertidas) {
 // ==============================
 
 const params = new URLSearchParams(window.location.search);
-const orderId = params.get("order_id");
-const email = params.get("email");
+const orderId = params.get("orden");
+const cantidadPreguntas = parseInt(params.get("preguntas"));
+const cartasPorTirada = 3;
 
-if (!orderId || !email) {
+if (!orderId || !cantidadPreguntas) {
   document.getElementById("mensajeConfirmacion").innerHTML =
     "⚠ No se detectaron datos de orden en el enlace.";
 }
@@ -277,6 +278,7 @@ let mazo = Array.from({length: 22}, (_, i) => i);
 let seleccionadas=[];
 let cartasDOM=[];
 let tiradaActiva=false;
+let tiradaActual = 1;
 
 
 const contenedor=document.getElementById("mazo");
@@ -342,7 +344,7 @@ carta.style.zIndex = index;
 
     carta.onclick=()=>{
       if(!tiradaActiva) return;
-      if(seleccionadas.length>=3) return;
+      if(seleccionadas.length >= cartasPorTirada) return;
       if(seleccionadas.includes(carta)) return;
 
       carta.classList.remove("mezclando");
@@ -363,7 +365,7 @@ marcador.textContent = seleccionadas.length;
 carta.appendChild(marcador);
 
 
-      if(seleccionadas.length===3){
+      if(seleccionadas.length === cartasPorTirada){
         revelarCartas();
       }
     };
@@ -442,6 +444,19 @@ const invertidas = seleccionadas.map(c =>
 );
 
   enviarCartasAMake(numeros, nombres, invertidas);
+  if (tiradaActual < cantidadPreguntas) {
+  tiradaActual++;
+  
+  setTimeout(() => {
+    seleccionadas = [];
+    cartasDOM = [];
+    contenedor.innerHTML = "";
+    iniciarTirada();
+  }, 3000);
+
+} else {
+  console.log("Todas las tiradas completadas");
+  
 
 }
 
