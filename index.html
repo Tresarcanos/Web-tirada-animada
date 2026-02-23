@@ -446,9 +446,9 @@ const invertidas = seleccionadas.map(c =>
   enviarCartasAMake(numeros, nombres, invertidas);
   console.log("Tirada actual:", tiradaActual, "Cantidad comprada:", cantidadPreguntas);
   if (tiradaActual < cantidadPreguntas) {
-  tiradaActual++;
-  
+
   setTimeout(() => {
+    tiradaActual++;
     seleccionadas = [];
     cartasDOM = [];
     contenedor.innerHTML = "";
