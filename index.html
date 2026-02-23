@@ -192,6 +192,9 @@ button{
 
 <div class="cartas" id="mazo"></div>
 <div id="resultado" style="margin-top:30px;font-size:18px;"></div>
+<button id="btnSiguiente" style="display:none; margin-top:20px;">
+  Elegí las cartas para tu siguiente revelación
+</button>
 
 <script>
 
@@ -279,6 +282,21 @@ let seleccionadas=[];
 let cartasDOM=[];
 let tiradaActiva=false;
 let tiradaActual = 1;
+
+document.getElementById("btnSiguiente").addEventListener("click", function() {
+
+  tiradaActual++;
+
+  this.style.display = "none";
+
+  seleccionadas = [];
+  cartasDOM = [];
+  contenedor.innerHTML = "";
+  document.getElementById("overlayOscuro").classList.remove("activo");
+
+  iniciarTirada();
+
+});
 
 
 const contenedor=document.getElementById("mazo");
@@ -447,13 +465,14 @@ const invertidas = seleccionadas.map(c =>
   console.log("Tirada actual:", tiradaActual, "Cantidad comprada:", cantidadPreguntas);
   if (tiradaActual < cantidadPreguntas) {
 
-  setTimeout(() => {
-    tiradaActual++;
-    seleccionadas = [];
-    cartasDOM = [];
-    contenedor.innerHTML = "";
-    iniciarTirada();
-  }, 3000);
+  const btn = document.getElementById("btnSiguiente");
+
+  const textoNumero =
+    tiradaActual === 1 ? "segunda" :
+    tiradaActual === 2 ? "tercera" : "siguiente";
+
+  btn.textContent = "Elegí las cartas para tu " + textoNumero + " revelación";
+  btn.style.display = "inline-block";
 
 } else {
   console.log("Todas las tiradas completadas");
