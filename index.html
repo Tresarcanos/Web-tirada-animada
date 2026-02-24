@@ -493,48 +493,90 @@ const invertidas = seleccionadas.map(c =>
 
 } else {
 
-  // Quitar botón si quedó visible
   const btn = document.getElementById("btnSiguiente");
   btn.style.display = "none";
 
   // Activar overlay
   document.getElementById("overlayOscuro").classList.add("activo");
 
-  // Crear modal
-  const modal = document.createElement("div");
-  modal.style.position = "fixed";
-  modal.style.top = "50%";
-  modal.style.left = "50%";
-  modal.style.transform = "translate(-50%, -50%) scale(0.9)";
-  modal.style.zIndex = "3000";
-  modal.style.background = "white";
-  modal.style.color = "black";
-  modal.style.padding = "45px";
-  modal.style.borderRadius = "20px";
-  modal.style.maxWidth = "520px";
-  modal.style.textAlign = "center";
-  modal.style.boxShadow = "0 25px 80px rgba(0,0,0,0.45)";
-  modal.style.fontSize = "18px";
-  modal.style.opacity = "0";
-  modal.style.transition = "all 0.4s ease";
+  // Crear contador centrado
+  const contador = document.createElement("div");
+  contador.style.position = "fixed";
+  contador.style.top = "50%";
+  contador.style.left = "50%";
+  contador.style.transform = "translate(-50%, -50%)";
+  contador.style.zIndex = "3000";
+  contador.style.fontSize = "80px";
+  contador.style.color = "white";
+  contador.style.fontWeight = "bold";
+  contador.style.transition = "all 0.3s ease";
+  contador.textContent = "3";
 
-  modal.innerHTML = `
-    <h2 style="margin-bottom:20px; font-size:26px;">Gracias</h2>
-    <p style="line-height:1.6;">
-      Tus cartas ya fueron reveladas.<br><br>
-      En breve vamos a analizar cuidadosamente tu tirada
-      y recibirás la interpretación completa en tu correo electrónico.
-    </p>
-  `;
+  document.body.appendChild(contador);
 
-  document.body.appendChild(modal);
+  let tiempo = 3;
 
-  // Animación suave
-  setTimeout(() => {
-    modal.style.opacity = "1";
-    modal.style.transform = "translate(-50%, -50%) scale(1)";
-  }, 50);
-}
+  const intervalo = setInterval(() => {
+    tiempo--;
+    contador.textContent = tiempo;
+
+    if (tiempo === 0) {
+      clearInterval(intervalo);
+      contador.remove();
+      mostrarMensajeFinal();
+    }
+  }, 1000);
+
+  function mostrarMensajeFinal() {
+
+    const modal = document.createElement("div");
+    modal.style.position = "fixed";
+    modal.style.top = "50%";
+    modal.style.left = "50%";
+    modal.style.transform = "translate(-50%, -50%) scale(0.9)";
+    modal.style.zIndex = "3000";
+    modal.style.background = "white";
+    modal.style.color = "black";
+    modal.style.padding = "45px";
+    modal.style.borderRadius = "20px";
+    modal.style.maxWidth = "520px";
+    modal.style.textAlign = "center";
+    modal.style.boxShadow = "0 25px 80px rgba(0,0,0,0.45)";
+    modal.style.fontSize = "18px";
+    modal.style.opacity = "0";
+    modal.style.transition = "all 0.4s ease";
+
+    modal.innerHTML = `
+      <div style="font-size:40px; margin-bottom:15px;">✨</div>
+      <h2 style="margin-bottom:20px; font-size:26px;">Gracias</h2>
+      <p style="line-height:1.6; margin-bottom:25px;">
+        Tus cartas ya fueron reveladas.<br><br>
+        En breve vamos a analizar cuidadosamente tu tirada
+        y recibirás la interpretación completa en tu correo electrónico.
+      </p>
+      <button id="btnCerrarFinal" style="
+        padding:12px 28px;
+        font-size:16px;
+        background:gold;
+        border:none;
+        border-radius:10px;
+        cursor:pointer;
+      ">
+        Cerrar
+      </button>
+    `;
+
+    document.body.appendChild(modal);
+
+    setTimeout(() => {
+      modal.style.opacity = "1";
+      modal.style.transform = "translate(-50%, -50%) scale(1)";
+    }, 50);
+
+    document.getElementById("btnCerrarFinal").addEventListener("click", function() {
+      window.location.href = "https://www.tresarcanos.com";
+    });
+  }
 
 }  // ← ESTA LLAVE FALTABA
 
