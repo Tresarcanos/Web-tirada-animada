@@ -297,6 +297,7 @@ let seleccionadas=[];
 let cartasDOM=[];
 let tiradaActiva=false;
 let tiradaActual = 1;
+let todasLasTiradas = [];
 
 document.getElementById("btnSiguiente").addEventListener("click", function() {
 
@@ -476,7 +477,12 @@ const invertidas = seleccionadas.map(c =>
   c.classList.contains("invertida") ? "invertida" : ""
 );
 
-  enviarCartasAMake(numeros, nombres, invertidas);
+todasLasTiradas.push({
+  tirada: tiradaActual,
+  cartas: numeros,
+  nombres: nombres,
+  invertidas: invertidas
+});
   console.log("Tirada actual:", tiradaActual, "Cantidad comprada:", cantidadPreguntas);
   
   if (tiradaActual < cantidadPreguntas) {
@@ -495,6 +501,24 @@ const invertidas = seleccionadas.map(c =>
 
   const btn = document.getElementById("btnSiguiente");
   btn.style.display = "none";
+  // 🔮 Enviar TODAS las tiradas juntas a Make
+fetch("https://hook.us2.make.com/jp7gpnwfrykmtqupjjhksskpv8slgtwg", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    order_id: orderId,
+    cantidad_tiradas: cantidadPreguntas,
+    tiradas: todasLasTiradas
+  })
+})
+.then(() => {
+  console.log("Todas las tiradas enviadas correctamente");
+})
+.catch(() => {
+  console.log("Error al enviar las tiradas");
+});
 
   // Activar overlay
   document.getElementById("overlayOscuro").classList.add("activo");
