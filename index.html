@@ -502,23 +502,29 @@ const invertidas = seleccionadas.map(c =>
   // Crear contador centrado
   const contador = document.createElement("div");
   contador.style.position = "fixed";
-  contador.style.top = "50%";
+  contador.style.top = "120px";
   contador.style.left = "50%";
   contador.style.transform = "translate(-50%, -50%)";
   contador.style.zIndex = "3000";
   contador.style.fontSize = "80px";
   contador.style.color = "white";
   contador.style.fontWeight = "bold";
-  contador.style.transition = "all 0.3s ease";
-  contador.textContent = "3";
+  contador.style.transition = "opacity 0.6s ease";
+  contador.style.opacity = "1";
+  contador.textContent = "5";
 
   document.body.appendChild(contador);
 
-  let tiempo = 3;
+  let tiempo = 5;
 
   const intervalo = setInterval(() => {
     tiempo--;
-    contador.textContent = tiempo;
+contador.style.opacity = "0";
+
+setTimeout(() => {
+  contador.textContent = tiempo;
+  contador.style.opacity = "1";
+}, 300);
 
     if (tiempo === 0) {
       clearInterval(intervalo);
