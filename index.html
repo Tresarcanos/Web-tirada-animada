@@ -481,6 +481,7 @@ const invertidas = seleccionadas.map(c =>
   
   if (tiradaActual < cantidadPreguntas) {
     console.log("Entró al bloque de siguiente revelación");
+    document.getElementById("overlayOscuro").classList.remove("activo");
     const btn = document.getElementById("btnSiguiente");
 
   const textoNumero =
