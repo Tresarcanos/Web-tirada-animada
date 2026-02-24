@@ -472,16 +472,19 @@ carta.appendChild(nombre);
   // 🔮 Enviar cartas a Make
 const numeros = seleccionadas.map(c => parseInt(c.dataset.numero));
 const nombres = numeros.map(n => arcanos[n]);
-
 const invertidas = seleccionadas.map(c => 
   c.classList.contains("invertida") ? "invertida" : ""
 );
 
+const cartasFinales = nombres.map((nombre, i) => {
+  return invertidas[i] === "invertida"
+    ? nombre + " (invertida)"
+    : nombre;
+});
+
 todasLasTiradas.push({
   tirada: tiradaActual,
-  cartas: numeros,
-  nombres: nombres,
-  invertidas: invertidas
+  cartas: cartasFinales
 });
   console.log("Tirada actual:", tiradaActual, "Cantidad comprada:", cantidadPreguntas);
   
