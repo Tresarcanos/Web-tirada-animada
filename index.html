@@ -352,30 +352,30 @@ function iniciarTirada(){
 
     carta.dataset.numero=numero;
     
-    // posicion tipo abanico
-let separacion;
+// 🔮 POSICION EN SEMICIRCULO
 
-if(window.innerWidth < 600){
-  separacion = 60;     // celular
-}else if(window.innerWidth < 1000){
-  separacion = 80;     // tablet
-}else{
-  separacion = 80;     // desktop
-}
-const anchoCarta = 120;
-const cartasPorFila = 11;
+const totalCartas = mazo.length;
+const radio = window.innerWidth < 600 ? 300 : 500;
 
-const fila = Math.floor(index / cartasPorFila);
-const posicionEnFila = index % cartasPorFila;
+const centroX = window.innerWidth / 2;
+const centroY = 450; // altura del centro del círculo
 
-const anchoTotal = (cartasPorFila - 1) * separacion + anchoCarta;
+// Ángulo desde -90° a +90°
+const anguloInicial = -90;
+const anguloFinal = 90;
 
-carta.style.left = ((window.innerWidth - anchoTotal) / 2 + posicionEnFila * separacion) + "px";
+const angulo = anguloInicial + (index / (totalCartas - 1)) * (anguloFinal - anguloInicial);
+const radianes = angulo * (Math.PI / 180);
 
-const altoCarta = 190;
-const separacionVertical = 280; // distancia entre filas
-carta.style.top = (fila * separacionVertical) + "px";
-carta.style.zIndex = index;
+const x = centroX + radio * Math.cos(radianes);
+const y = centroY + radio * Math.sin(radianes);
+
+carta.style.left = (x - 75) + "px";   // 75 = mitad ancho carta
+carta.style.top = (y - 125) + "px";   // 125 = mitad alto carta
+
+// Rotación para efecto abanico real
+carta.style.transform = `rotate(${angulo}deg)`;
+carta.style.transformOrigin = "center bottom";
 
     carta.onclick=()=>{
       if(!tiradaActiva) return;
