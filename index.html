@@ -352,31 +352,40 @@ function iniciarTirada(){
 
     carta.dataset.numero=numero;
     
-// 🔮 POSICION EN ABANICO HORIZONTAL REAL
+// 🔮 ABANICO ELIPTICO TIPO IMAGEN VIOLETA
 
 const totalCartas = mazo.length;
-const radio = window.innerWidth < 600 ? 350 : 600;
 
 const centroX = window.innerWidth / 2;
-const centroY = 650; // 🔥 este es el punto clave
+const centroY = 520; // ajusta altura general
 
-// Arco tipo sonrisa
-const anguloInicial = -80;
-const anguloFinal = 80;
+// Apertura del abanico
+const anguloInicial = -70;
+const anguloFinal = 70;
 
-const angulo = anguloInicial + (index / (totalCartas - 1)) * (anguloFinal - anguloInicial);
-const radianes = (angulo - 90) * (Math.PI / 180);
+// Curvatura vertical (cuánto baja en los extremos)
+const curvatura = 140;
 
-// Calculamos posición
-const x = centroX + radio * Math.cos(radianes);
-const y = centroY + radio * Math.sin(radianes);
+for (let i = 0; i < totalCartas; i++) {
 
-carta.style.left = (x - 75) + "px";
-carta.style.top = (y - 125) + "px";
+  const progreso = index / (totalCartas - 1);
+  const angulo = anguloInicial + progreso * (anguloFinal - anguloInicial);
 
-// Rotación más suave tipo abanico
-carta.style.transform = `rotate(${angulo * 0.5}deg)`;
-carta.style.transformOrigin = "center bottom";
+  // Distribución horizontal más plana
+  const anchoAbanico = window.innerWidth < 600 ? 500 : 900;
+  const x = centroX - anchoAbanico / 2 + progreso * anchoAbanico;
+
+  // Curva tipo sonrisa suave (parabólica, no circular)
+  const offset = progreso - 0.5;
+  const y = centroY + curvatura * (offset * offset);
+
+  carta.style.left = (x - 75) + "px";
+  carta.style.top = (y - 125) + "px";
+
+  // Rotación suave tipo abanico real
+  carta.style.transform = `rotate(${angulo * 0.6}deg)`;
+  carta.style.transformOrigin = "center bottom";
+}
 
     carta.onclick=()=>{
       if(!tiradaActiva) return;
