@@ -352,29 +352,30 @@ function iniciarTirada(){
 
     carta.dataset.numero=numero;
     
-// 🔮 POSICION EN SEMICIRCULO
+// 🔮 POSICION EN ABANICO HORIZONTAL REAL
 
 const totalCartas = mazo.length;
-const radio = window.innerWidth < 600 ? 300 : 500;
+const radio = window.innerWidth < 600 ? 350 : 600;
 
 const centroX = window.innerWidth / 2;
-const centroY = 450; // altura del centro del círculo
+const centroY = 650; // 🔥 este es el punto clave
 
-// Ángulo desde -90° a +90°
-const anguloInicial = 160;
-const anguloFinal = 20;
+// Arco tipo sonrisa
+const anguloInicial = -80;
+const anguloFinal = 80;
 
 const angulo = anguloInicial + (index / (totalCartas - 1)) * (anguloFinal - anguloInicial);
-const radianes = angulo * (Math.PI / 180);
+const radianes = (angulo - 90) * (Math.PI / 180);
 
+// Calculamos posición
 const x = centroX + radio * Math.cos(radianes);
 const y = centroY + radio * Math.sin(radianes);
 
-carta.style.left = (x - 75) + "px";   // 75 = mitad ancho carta
-carta.style.top = (y - 125) + "px";   // 125 = mitad alto carta
+carta.style.left = (x - 75) + "px";
+carta.style.top = (y - 125) + "px";
 
-// Rotación para efecto abanico real
-carta.style.transform = `rotate(${angulo}deg)`;
+// Rotación más suave tipo abanico
+carta.style.transform = `rotate(${angulo * 0.5}deg)`;
 carta.style.transformOrigin = "center bottom";
 
     carta.onclick=()=>{
