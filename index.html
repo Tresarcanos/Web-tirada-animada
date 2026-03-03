@@ -12,12 +12,30 @@ body{
   margin:0;
   min-height:100vh;
 
-  background: radial-gradient(circle at center, #2c1b47 0%, #120b1f 60%, #000000 100%);
+  background:
+  linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.55)),
+  url("img/fondo_web_tirada.png");
+
+background-size: cover;
+background-position: center;
+background-repeat: no-repeat;
+background-attachment: fixed;
   color: white;
 }
 
 h1{
   margin-top:20px;
+  font-size: 42px;
+  letter-spacing: 2px;
+
+  color: rgba(255, 255, 255, 0.85); /* transparencia */
+  
+  color: rgba(220, 230, 255, 0.9);
+
+text-shadow:
+  0 0 12px rgba(120, 170, 255, 0.7),
+  0 0 30px rgba(120, 170, 255, 0.4);
+
 }
 
 /* CONTENEDOR GENERAL TIPO ABANICO VISTA DORSO*/
@@ -93,11 +111,14 @@ h1{
 }
 
 .carta.zoomFinal{
-  scale: 1.9;
+  scale: 1.6;
 }
 
 .carta.seleccionada .inner {
-  box-shadow: 0 0 20px gold;
+  box-shadow:
+    0 0 15px rgba(200, 230, 255, 0.9),
+    0 0 30px rgba(120, 180, 255, 0.6),
+    0 0 50px rgba(120, 180, 255, 0.3);
 }
 
 /* Numerito que aparece arriba */
@@ -105,17 +126,26 @@ h1{
   position: absolute;
   top: -10px;
   right: -10px;
-  background: gold;
-  color: black;
+
+  background: rgba(180, 220, 255, 0.9);
+  color: #0f1f3d;
+
   font-weight: bold;
   width: 28px;
   height: 28px;
   border-radius: 50%;
+
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 14px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.4);
+
+  box-shadow:
+    0 0 12px rgba(200, 230, 255, 0.9),
+    0 0 25px rgba(120, 180, 255, 0.6);
+
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255,255,255,0.3);
 }
 
 .mezclando{
@@ -133,11 +163,83 @@ h1{
   to{ transform: translateY(10px); }
 }
 
-button{
-  padding:10px 20px;
-  margin-top:20px;
-  font-size:16px;
+#btnIniciar{
+  padding: 14px 32px;
+  margin-top: 25px;
+  font-size: 16px;
+  letter-spacing: 1px;
+  font-weight: 600;
+
+  color: rgba(255,255,255,0.9);
+
+  background: linear-gradient(135deg, #0f1f3d, #1c2f5a);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+
+  backdrop-filter: blur(6px);
+
+  box-shadow:
+    0 0 15px rgba(80,140,255,0.25),
+    0 8px 20px rgba(0,0,0,0.4);
+
+  transition: all 0.3s ease;
+}
+
+#btnIniciar:hover{
+  transform: translateY(-3px);
+  box-shadow:
+    0 0 25px rgba(120,180,255,0.5),
+    0 12px 25px rgba(0,0,0,0.5);
+}
+
+#btnIniciar:active{
+  transform: translateY(3px) scale(0.97);
+  box-shadow:
+    0 0 10px rgba(80,140,255,0.2),
+    0 4px 10px rgba(0,0,0,0.6);
+}
+
+#btnCerrarFinal{
+  padding: 12px 28px;
+  font-size: 16px;
+  letter-spacing: 1px;
+  font-weight: 600;
+
+  color: rgba(255,255,255,0.9);
+
+  background: linear-gradient(135deg, #0f1f3d, #1c2f5a);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+
+  backdrop-filter: blur(6px);
+
+  box-shadow:
+    0 0 15px rgba(80,140,255,0.25),
+    0 8px 20px rgba(0,0,0,0.4);
+
   cursor:pointer;
+  transition: all 0.3s ease;
+}
+
+#btnCerrarFinal:active{
+  transform: translateY(3px) scale(0.97);
+  box-shadow:
+    0 0 10px rgba(80,140,255,0.2),
+    0 4px 10px rgba(0,0,0,0.6);
+}
+
+#btnCerrarFinal:hover{
+  transform: translateY(-3px);
+  box-shadow:
+    0 0 25px rgba(120,180,255,0.5),
+    0 12px 25px rgba(0,0,0,0.5);
+}
+
+#btnCerrarFinal:active{
+  transform: translateY(3px) scale(0.97);
+  box-shadow:
+    0 0 10px rgba(80,140,255,0.2),
+    0 4px 10px rgba(0,0,0,0.6);
 }
 /* 🔮 Nombre debajo de cada carta */
 .nombreCarta{
@@ -182,9 +284,6 @@ button{
 
 <button id="btnIniciar" onclick="iniciarTirada()">Mezclar y comenzar</button>
 
-<!-- 🔊 Sonidos -->
-<audio id="sonidoClick" src="sound/select2.mp3" preload="auto"></audio>
-<audio id="sonidoRevelar" src="sound/revelar2.mp3" preload="auto"></audio>
 
 <div id="overlayOscuro" class="overlayOscuro"></div>
 <div id="mensajeConfirmacion" style="margin-top:20px;font-size:18px;"></div>
@@ -212,6 +311,19 @@ button{
 </button>
 
 <script>
+
+// 🔊 PRELOAD DE SONIDOS
+
+const sonidos = {
+  boton: new Audio("sound/clic.mp3"),
+  seleccionar: new Audio("sound/select2.mp3"),
+  revelar: new Audio("sound/revelar2.mp3")
+};
+
+Object.values(sonidos).forEach(audio => {
+  audio.preload = "auto";
+});
+
 
 const arcanos = {
 0: "El Loco",
@@ -301,6 +413,9 @@ let todasLasTiradas = [];
 
 document.getElementById("btnSiguiente").addEventListener("click", function() {
 
+sonidos.boton.currentTime = 0;
+sonidos.boton.play();
+  
   tiradaActual++;
 
   this.style.display = "none";
@@ -319,6 +434,9 @@ const contenedor=document.getElementById("mazo");
 
 /* MEZCLA VISUAL + REAL */
 function iniciarTirada(){
+  sonidos.boton.currentTime = 0;
+  sonidos.boton.play();
+
   document.getElementById("btnIniciar").disabled = true;
 
   seleccionadas=[];
@@ -359,7 +477,7 @@ const totalCartas = mazo.length;
 const centroX = window.innerWidth / 2;
 const header = document.querySelector("h1");
 const headerBottom = header.getBoundingClientRect().bottom;
-const centroY = headerBottom + 150;
+const centroY = headerBottom + 100;
 
 const anguloInicial = -55;
 const anguloFinal = 55;
@@ -390,9 +508,8 @@ carta.style.transformOrigin = "center bottom";
       carta.classList.remove("mezclando");
       seleccionadas.push(carta);
       if (seleccionadas.length < 3) {
-  const sonido = document.getElementById("sonidoClick");
-  sonido.currentTime = 0;
-  sonido.play();
+  sonidos.seleccionar.currentTime = 0;
+sonidos.seleccionar.play();
 }
 
       // Agrega efecto visual de seleccion
@@ -421,9 +538,8 @@ carta.appendChild(marcador);
 }
 
 function revelarCartas(){
-const sonidoRevelar = document.getElementById("sonidoRevelar");
-sonidoRevelar.currentTime = 0;
-sonidoRevelar.play();
+sonidos.revelar.currentTime = 0;
+sonidos.revelar.play();
 
 
   tiradaActiva=false;
@@ -449,7 +565,7 @@ sonidoRevelar.play();
 
     // Enderezar carta (quitar curvatura del abanico)
   carta.style.transform = "rotate(0deg)";
-  
+
   if(Math.random()<0.5){
     carta.classList.add("invertida");
   }
@@ -541,9 +657,13 @@ fetch("https://hook.us2.make.com/tpwlpxfgyhjn9idp4zii4mkehgqd7xc3", {
   contador.style.left = "50%";
   contador.style.transform = "translate(-50%, -50%)";
   contador.style.zIndex = "3000";
-  contador.style.fontSize = "80px";
+  contador.style.fontSize = "60px";
   contador.style.color = "white";
   contador.style.fontWeight = "bold";
+  contador.style.textShadow = `
+  0 0 15px rgba(200,230,255,0.9),
+  0 0 35px rgba(120,180,255,0.7),
+  0 0 60px rgba(80,140,255,0.5)`;
   contador.style.transition = "opacity 0.6s ease";
   contador.style.opacity = "1";
   contador.textContent = "5";
@@ -576,13 +696,15 @@ setTimeout(() => {
     modal.style.left = "50%";
     modal.style.transform = "translate(-50%, -50%) scale(0.9)";
     modal.style.zIndex = "3000";
-    modal.style.background = "white";
-    modal.style.color = "black";
+    modal.style.background = "rgba(10, 20, 45, 0.85)";
+    modal.style.color = "white";
+    modal.style.backdropFilter = "blur(10px)";
+    modal.style.border = "1px solid rgba(255,255,255,0.1)";
     modal.style.padding = "45px";
     modal.style.borderRadius = "20px";
     modal.style.maxWidth = "520px";
     modal.style.textAlign = "center";
-    modal.style.boxShadow = "0 25px 80px rgba(0,0,0,0.45)";
+    modal.style.boxShadow = "0 0 40px rgba(80, 140, 255, 0.3)";
     modal.style.fontSize = "18px";
     modal.style.opacity = "0";
     modal.style.transition = "all 0.4s ease";
@@ -595,16 +717,9 @@ setTimeout(() => {
         En breve vamos a analizar cuidadosamente tu tirada
         y recibirás la interpretación completa en tu correo electrónico.
       </p>
-      <button id="btnCerrarFinal" style="
-        padding:12px 28px;
-        font-size:16px;
-        background:gold;
-        border:none;
-        border-radius:10px;
-        cursor:pointer;
-      ">
-        Cerrar
-      </button>
+      <button id="btnCerrarFinal">
+  Cerrar
+  </button>
     `;
 
     document.body.appendChild(modal);
@@ -614,9 +729,17 @@ setTimeout(() => {
       modal.style.transform = "translate(-50%, -50%) scale(1)";
     }, 50);
 
-    document.getElementById("btnCerrarFinal").addEventListener("click", function() {
-      window.location.href = "https://www.tresarcanos.com";
-    });
+  document.getElementById("btnCerrarFinal").addEventListener("click", function() {
+
+  sonidos.boton.currentTime = 0;
+  sonidos.boton.play();
+
+  sonidos.boton.onended = function() {
+    window.location.href = "https://www.tresarcanos.com";
+  };
+
+});
+
   }
 }
 
