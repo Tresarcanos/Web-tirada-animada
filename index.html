@@ -89,11 +89,11 @@ h1{
 /* FEEDBACK VISUAL CUANDO SE SELECCIONA */
 
 .carta.seleccionada {
-  transform: translateY(-35px); /* pequeño salto hacia arriba */
+  margin-top: -35px;
 }
 
 .carta.zoomFinal{
-  transform: scale(1.9);
+  scale: 1.9;
 }
 
 .carta.seleccionada .inner {
@@ -177,8 +177,8 @@ button{
 
 <body>
 
-<h1>Elegi tus arcanos</h1>
-<p>Concentrate y elegí tres cartas</p>
+<h1>Tres Arcanos - Tarot online</h1>
+<p>Debes elegir 3 cartas para cada pregunta</p>
 
 <button id="btnIniciar" onclick="iniciarTirada()">Mezclar y comenzar</button>
 
@@ -352,39 +352,33 @@ function iniciarTirada(){
 
     carta.dataset.numero=numero;
     
-// 🔮 ABANICO ELIPTICO TIPO IMAGEN VIOLETA
+// 🔮 ABANICO ELIPTICO CORRECTO
 
 const totalCartas = mazo.length;
 
 const centroX = window.innerWidth / 2;
-const centroY = 520; // ajusta altura general
+const header = document.querySelector("h1");
+const headerBottom = header.getBoundingClientRect().bottom;
+const centroY = headerBottom + 150;
 
-// Apertura del abanico
 const anguloInicial = -55;
 const anguloFinal = 55;
+const curvatura = 520;
 
-// Curvatura vertical (cuánto baja en los extremos)
-const curvatura = 180;
+const progreso = index / (totalCartas - 1);
+const angulo = anguloInicial + progreso * (anguloFinal - anguloInicial);
 
-for (let i = 0; i < totalCartas; i++) {
+const anchoAbanico = window.innerWidth < 600 ? 500 : 650;
+const x = centroX - anchoAbanico / 2 + progreso * anchoAbanico;
 
-  const progreso = index / (totalCartas - 1);
-  const angulo = anguloInicial + progreso * (anguloFinal - anguloInicial);
+const offset = progreso - 0.5;
+const y = centroY + curvatura * (offset * offset);
 
-  // Distribución horizontal más plana
-  const anchoAbanico = window.innerWidth < 600 ? 500 : 900;
-  const x = centroX - anchoAbanico / 2 + progreso * anchoAbanico;
+carta.style.left = (x - 75) + "px";
+carta.style.top = (y - 125) + "px";
 
-  // Curva tipo sonrisa suave (parabólica, no circular)
-  const offset = progreso - 0.5;
-  const y = centroY + curvatura * (offset * offset);
-
-  carta.style.left = (x - 75) + "px";
-  carta.style.top = (y - 125) + "px";
-
-  // Rotación suave tipo abanico real
-  carta.style.transform = `rotate(${angulo * 0.6}deg)`;
-  carta.style.transformOrigin = "center bottom";
+inner.style.transform = `rotate(${angulo * 0.6}deg)`;
+inner.style.transformOrigin = "center bottom";
 }
 
     carta.onclick=()=>{
@@ -451,6 +445,9 @@ sonidoRevelar.play();
 
   // Centro vertical
   carta.style.top = "80px";
+
+    // Enderezar carta (quitar curvatura del abanico)
+  carta.querySelector(".inner").style.transform = "rotate(0deg)";
 
   if(Math.random()<0.5){
     carta.classList.add("invertida");
