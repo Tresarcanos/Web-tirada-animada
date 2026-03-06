@@ -274,6 +274,13 @@ text-shadow:
 .overlayOscuro.activo {
   opacity: 1;
 }
+@media (max-width:700px){
+
+.carta.zoomFinal{
+  scale:1.3;
+}
+
+}
 
 </style>
 </head>
@@ -311,8 +318,9 @@ text-shadow:
   Elegí las cartas para tu siguiente revelación
 </button>
 
-<script>
 
+<script>
+const esCelular = window.innerWidth < 700;
 // 🔊 PRELOAD DE SONIDOS
 
 const sonidos = {
@@ -471,7 +479,9 @@ function iniciarTirada(){
 
     carta.dataset.numero=numero;
     
-// 🔮 ABANICO ELIPTICO CORRECTO
+if(!esCelular){
+
+// 🔮 ABANICO PARA PC
 
 const totalCartas = mazo.length;
 
@@ -487,7 +497,7 @@ const curvatura = 520;
 const progreso = index / (totalCartas - 1);
 const angulo = anguloInicial + progreso * (anguloFinal - anguloInicial);
 
-const anchoAbanico = window.innerWidth < 600 ? 500 : 650;
+const anchoAbanico = 650;
 const x = centroX - anchoAbanico / 2 + progreso * anchoAbanico;
 
 const offset = progreso - 0.5;
@@ -501,6 +511,27 @@ const anguloFinalCarta = angulo * 0.6;
 carta.style.transform = `rotate(${anguloFinalCarta}deg)`;
 carta.style.transformOrigin = "center bottom";
 
+}else{
+
+// 📱 GRILLA PARA CELULAR
+
+const columnas = 3;
+const espacioX = 110;
+const espacioY = 140;
+
+const fila = Math.floor(index / columnas);
+const columna = index % columnas;
+
+const centroX = window.innerWidth / 2;
+
+const x = centroX - ((columnas - 1) * espacioX)/2 + columna * espacioX;
+const y = 140 + fila * espacioY;
+
+carta.style.left = (x - 50) + "px";
+carta.style.top = y + "px";
+
+}
+
     carta.onclick=()=>{
       if(!tiradaActiva) return;
       if(seleccionadas.length >= cartasPorTirada) return;
@@ -512,6 +543,7 @@ carta.style.transformOrigin = "center bottom";
   sonidos.seleccionar.currentTime = 0;
 sonidos.seleccionar.play();
 }
+
 
       // Agrega efecto visual de seleccion
 carta.classList.add("seleccionada");
@@ -553,16 +585,28 @@ sonidos.revelar.play();
 
   carta.style.zIndex = 999;
 
-  // Centro horizontal
+  if(esCelular){
+
+  // 📱 REVELACIÓN VERTICAL EN CELULAR
+
+  const centroX = window.innerWidth / 2;
+
+  carta.style.left = (centroX - 75) + "px";
+  carta.style.top = (120 + i * 400) + "px";
+
+}else{
+
+  // 💻 REVELACIÓN HORIZONTAL EN PC
+
   const centroX = window.innerWidth / 2;
   const anchoCarta = 220;
-  const separacionFinal = 400; // espacio entre las 3 finales
+  const separacionFinal = 300;
   const desplazamiento = (i - 1) * separacionFinal;
 
   carta.style.left = (centroX - anchoCarta/2 + desplazamiento) + "px";
-
-  // Centro vertical
   carta.style.top = "80px";
+
+}
 
     // Enderezar carta (quitar curvatura del abanico)
   carta.style.transform = "rotate(0deg)";
@@ -671,7 +715,7 @@ fetch("https://hook.us2.make.com/tpwlpxfgyhjn9idp4zii4mkehgqd7xc3", {
 
   document.body.appendChild(contador);
 
-  let tiempo = 5;
+  let tiempo = esCelular ? 10 : 5;
 
   const intervalo = setInterval(() => {
     tiempo--;
