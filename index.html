@@ -12,7 +12,6 @@ body{
   text-align:center;
   margin:0;
   min-height:100vh;
-  padding-bottom:150px;
 
   background:
   linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.55)),
@@ -529,6 +528,11 @@ carta.style.transformOrigin = "center bottom";
 const columnas = 4;
 const espacioX = 110;
 const espacioY = 170;
+
+// 📱 MARGEN AL FINAL DE LAS CARTAS, PADDING
+
+const filasTotales = Math.ceil(mazo.length / columnas);
+contenedor.style.height = (filasTotales * espacioY + 200) + "px";
 
 const fila = Math.floor(index / columnas);
 const columna = index % columnas;
