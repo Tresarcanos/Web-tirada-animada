@@ -524,10 +524,10 @@ const columna = index % columnas;
 
 const centroX = window.innerWidth / 2;
 
-const x = centroX - (window.innerWidth - (columnas - 1) * espacioX) / 2 + columna * espacioX;
+const x = centroX - ((columnas - 1) * espacioX)/2 + columna * espacioX;
 const y = 5 + fila * espacioY;
 
-carta.style.left = (x - 50) + "px";
+carta.style.left = x + "px";
 carta.style.top = y + "px";
 
 }
